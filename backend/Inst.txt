@@ -1,0 +1,122 @@
+# FastAPI Alumni Portal Setup Guide
+
+## Project Structure
+```
+alumni-portal/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py
+│   │   │   ├── event.py
+│   │   │   ├── registration.py
+│   │   │   └── membership.py
+│   │   ├── schemas/
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py
+│   │   │   ├── event.py
+│   │   │   ├── registration.py
+│   │   │   ├── membership.py
+│   │   │   └── token.py
+│   │   ├── api/
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py
+│   │   │   ├── users.py
+│   │   │   ├── events.py
+│   │   │   ├── registrations.py
+│   │   │   ├── memberships.py
+│   │   │   └── payments.py
+│   │   ├── core/
+│   │   │   ├── __init__.py
+│   │   │   ├── security.py
+│   │   │   └── config.py
+│   │   └── services/
+│   │       ├── __init__.py
+│   │       └── stripe_service.py
+│   ├── alembic/
+│   │   ├── versions/
+│   │   │   └── ...
+│   │   ├── env.py
+│   │   └── alembic.ini
+│   ├── .env
+│   ├── requirements.txt
+│   └── setup.sh
+└── frontend/ (React frontend - unchanged)
+```
+
+## Setup Instructions
+
+1. **Create Project Structure**:
+   ```bash
+   mkdir -p alumni-portal/backend/app/{models,schemas,api,core,services}
+   mkdir -p alumni-portal/backend/alembic/versions
+   touch alumni-portal/backend/app/__init__.py
+   touch alumni-portal/backend/app/{models,schemas,api,core,services}/__init__.py
+   ```
+
+2. **Create Virtual Environment**:
+   ```bash
+   cd alumni-portal/backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**:
+   ```bash
+   pip install fastapi uvicorn sqlalchemy psycopg2-binary pydantic python-jose[cryptography] passlib[bcrypt] python-multipart python-dotenv alembic stripe
+   pip freeze > requirements.txt
+   ```
+
+4. **Create .env File**:
+   Create a file `alumni-portal/backend/.env` with:
+   ```
+   DATABASE_URL=postgresql://postgres:postgres@localhost/alumni_portal
+   SECRET_KEY=your-secret-key-here
+   ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=30
+   STRIPE_SECRET_KEY=your-stripe-secret-key
+   STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
+   FRONTEND_URL=http://localhost:3000
+   ```
+
+5. **Initialize Database**:
+   Make sure PostgreSQL is running and create the database:
+   ```bash
+   createdb alumni_portal
+   ```
+
+6. **Run the Application**:
+   ```bash
+   cd alumni-portal/backend
+   uvicorn app.main:app --reload
+   ```
+
+7. **Access API Documentation**:
+   Open your browser and go to:
+   - Swagger UI: http://localhost:8000/docs
+   - ReDoc: http://localhost:8000/redoc
+
+## Database Migrations
+
+1. **Initialize Alembic**:
+   ```bash
+   cd alumni-portal/backend
+   alembic init alembic
+   ```
+
+2. **Update alembic.ini**:
+   Edit the file to use the DATABASE_URL from environment variables.
+
+3. **Generate Initial Migration**:
+   ```bash
+   alembic revision --autogenerate -m "Initial tables"
+   ```
+
+4. **Run Migration**:
+   ```bash
+   alembic upgrade head
+   ```
