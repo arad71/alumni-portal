@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# build output
+build/
+dist/
+
+# misc
+.DS_Store
+.vscode/
