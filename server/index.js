@@ -26,11 +26,11 @@ app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 
 // Routes
 app.use('/api/auth', require('./src/routes/auth'));
-app.use('/api/users', require('./src/routes/users'));
-app.use('/api/events', require('./src/routes/events'));
-app.use('/api/registrations', require('./src/routes/registrations'));
-app.use('/api/memberships', require('./src/routes/memberships'));
-app.use('/api/payments', require('./src/routes/payments'));
+// app.use('/api/users', require('./src/routes/users'));
+// app.use('/api/events', require('./src/routes/events'));
+// app.use('/api/registrations', require('./src/routes/registrations'));
+// app.use('/api/memberships', require('./src/routes/memberships'));
+// app.use('/api/payments', require('./src/routes/payments'));
 
 // Health check
 app.get('/health', (req, res) => {
