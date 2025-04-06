@@ -1,6 +1,7 @@
 # File: app/schemas/user.py
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from pydantic.networks import  EmailStr
 from datetime import datetime
 
 # Shared properties

@@ -2,7 +2,7 @@
 from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
-
+from app.schemas.event import Event
 # Shared properties
 class RegistrationBase(BaseModel):
     event_id: int

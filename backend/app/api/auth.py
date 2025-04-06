@@ -11,7 +11,8 @@ from app import models, schemas
 from app.core.config import settings
 from app.core.security import create_access_token, verify_password, get_password_hash
 from app.database import get_db
-
+from app.schemas.token import Token, TokenPayload
+from app.schemas.user import UserCreate, User
 router = APIRouter(prefix="/auth")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
