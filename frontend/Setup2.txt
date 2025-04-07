@@ -1,0 +1,588 @@
+# Alumni Portal Frontend Implementation Guide
+
+This guide will help you set up and implement the React frontend for your Alumni Portal application. By following these steps, you'll create a beautiful, responsive, and functional user interface that connects to your FastAPI backend.
+
+## Project Structure Overview
+
+```
+alumni-portal-frontend/
+├── public/
+│   ├── images/  # Place event and profile images here
+│   └── favicon.ico
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── auth/       # Login, Register, ForgotPassword
+│   │   ├── common/     # Layout, Header, Footer, etc.
+│   │   ├── dashboard/  # Dashboard components
+│   │   ├── directory/  # Alumni directory
+│   │   ├── events/     # Event listings and details
+│   │   ├── layout/     # Page layout components
+│   │   ├── membership/ # Membership plans and checkout
+│   │   └── profile/    # User profile
+│   ├── contexts/       # Auth and other context providers
+│   ├── hooks/          # Custom hooks
+│   ├── pages/          # Page components
+│   ├── services/       # API services
+│   ├── types/          # TypeScript type definitions
+│   ├── utils/          # Utility functions
+│   ├── App.tsx         # Main application component
+│   └── index.tsx       # Entry point
+└── package.json
+```
+
+## Step 1: Setup Project and Dependencies
+
+Start by creating a new React application with TypeScript:
+
+```bash
+npx create-react-app alumni-portal-frontend --template typescript
+cd alumni-portal-frontend
+```
+
+Install the necessary dependencies:
+
+```bash
+# UI Framework and styling
+npm install tailwindcss postcss autoprefixer
+npm install @headlessui/react
+npm install framer-motion
+
+# Routing
+npm install react-router-dom
+
+# Form handling
+npm install formik yup
+
+# HTTP client
+npm install axios
+
+# Date handling
+npm install date-fns
+
+# Other utilities
+npm install classnames
+```
+
+## Step 2: Configure Tailwind CSS
+
+Initialize Tailwind CSS:
+
+```bash
+npx tailwindcss init -p
+```
+
+Update the `tailwind.config.js` file with your custom theme:
+
+```javascript
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Merriweather', 'serif'],
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+Update your `src/index.css` file:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap');
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-blue-600 border border-blue-600 px-4 py-2 rounded-md transition-colors;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+  
+  .input-field {
+    @apply w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-light;
+  }
+}
+```
+
+## Step 3: Create Core Components
+
+### Create Layout Components
+
+First, implement the layout components that will be used across your application:
+
+1. **Header Component**: `src/components/layout/Header.tsx`
+   - Navbar with responsive mobile menu
+   - Authentication state-aware links
+   - Logo and navigation
+
+2. **Footer Component**: `src/components/layout/Footer.tsx`
+   - Site links and information
+   - Social media links
+   - Copyright and legal info
+
+3. **Layout Component**: `src/components/layout/Layout.tsx`
+   ```tsx
+   import React from 'react';
+   import Header from './Header';
+   import Footer from './Footer';
+
+   interface LayoutProps {
+     children: React.ReactNode;
+   }
+
+   const Layout: React.FC<LayoutProps> = ({ children }) => {
+     return (
+       <div className="flex flex-col min-h-screen">
+         <Header />
+         <main className="flex-grow pt-16">
+           {children}
+         </main>
+         <Footer />
+       </div>
+     );
+   };
+
+   export default Layout;
+   ```
+
+### Set Up API Service
+
+Create a base API service in `src/services/api.ts`:
+
+```typescript
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add a request interceptor to add the token to every request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add a response interceptor to handle authentication errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Clear token and redirect to login
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+```
+
+### Create Auth Context
+
+Implement the authentication context in `src/contexts/AuthContext.tsx`:
+
+```tsx
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import api from '../services/api';
+
+interface User {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  isAdmin: boolean;
+  hasMembership: boolean;
+}
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (userData: any) => Promise<void>;
+  logout: () => void;
+  checkMembership: () => Promise<boolean>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await api.get('/auth/me');
+          setUser(response.data);
+        } catch (err) {
+          localStorage.removeItem('token');
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      // FastAPI OAuth2 expects form data with username field (even if it's an email)
+      const formData = new FormData();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      const response = await api.post('/auth/login', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+
+      localStorage.setItem('token', response.data.access_token);
+      
+      // Get user details
+      const userResponse = await api.get('/auth/me');
+      setUser(userResponse.data);
+    } catch (err: any) {
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (userData: any) => {
+    try {
+      setLoading(true);
+      const response = await api.post('/auth/register', userData);
+      localStorage.setItem('token', response.data.access_token);
+      
+      // Get user details
+      const userResponse = await api.get('/auth/me');
+      setUser(userResponse.data);
+    } catch (err: any) {
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  const checkMembership = async (): Promise<boolean> => {
+    try {
+      const response = await api.get('/memberships/my-membership');
+      const hasMembership = response.data.has_membership;
+      
+      // Update user state with membership info
+      if (user) {
+        setUser({
+          ...user,
+          hasMembership
+        });
+      }
+      
+      return hasMembership;
+    } catch (err) {
+      return false;
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      error, 
+      login, 
+      register, 
+      logout,
+      checkMembership 
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext;
+```
+
+Create a custom hook for using the auth context in `src/hooks/useAuth.ts`:
+
+```typescript
+import { useContext } from 'react';
+import AuthContext from '../contexts/AuthContext';
+
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export default useAuth;
+```
+
+## Step 4: Implement Pages
+
+### Create React Router Setup
+
+Update your `App.tsx` to include routing:
+
+```tsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/common/ProtectedRoute';
+
+// Import pages
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import EventsPage from './pages/EventsPage';
+import EventDetailPage from './pages/EventDetailPage';
+import DirectoryPage from './pages/DirectoryPage';
+import ProfilePage from './pages/ProfilePage';
+import MembershipPage from './pages/MembershipPage';
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/directory" element={
+              <ProtectedRoute requiresMembership={true}>
+                <DirectoryPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/membership" element={
+              <ProtectedRoute>
+                <MembershipPage />
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
+```
+
+### Create Protected Route Component
+
+Create a `ProtectedRoute` component in `src/components/common/ProtectedRoute.tsx`:
+
+```tsx
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
+
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiresMembership?: boolean;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  requiresMembership = false 
+}) => {
+  const { user, loading, checkMembership } = useAuth();
+  const [membershipChecked, setMembershipChecked] = useState(!requiresMembership);
+  const [hasMembership, setHasMembership] = useState(false);
+
+  useEffect(() => {
+    const verifyMembership = async () => {
+      if (user && requiresMembership) {
+        const status = await checkMembership();
+        setHasMembership(status);
+        setMembershipChecked(true);
+      }
+    };
+
+    if (requiresMembership && user) {
+      verifyMembership();
+    }
+  }, [user, requiresMembership, checkMembership]);
+
+  if (loading || (requiresMembership && !membershipChecked)) {
+    return <div className="flex justify-center items-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (requiresMembership && !hasMembership) {
+    return <Navigate to="/membership" />;
+  }
+
+  return <>{children}</>;
+};
+
+export default ProtectedRoute;
+```
+
+## Step 5: Implement Each Feature
+
+Implement each major feature one by one:
+
+1. **Authentication Pages**
+   - Login Page
+   - Registration Page
+   - Forgot Password Page
+
+2. **Dashboard**
+   - Dashboard component with membership status, upcoming events, etc.
+   - Dashboard cards for quick access to features
+
+3. **Events**
+   - Event listing page
+   - Event detail page
+   - Event registration and payment
+
+4. **Alumni Directory**
+   - Directory search
+   - Member profiles
+   - Filtering options
+
+5. **Profile Management**
+   - View and edit profile
+   - Password change
+   - Privacy settings
+
+6. **Membership Management**
+   - Membership plans display
+   - Payment process
+
+## Step 6: Connect to Backend
+
+Make sure all components are properly connected to your FastAPI backend:
+
+1. **Environment Configuration**:
+   Create a `.env` file in your project root:
+   ```
+   REACT_APP_API_URL=http://localhost:8000
+   ```
+
+2. **Testing Connections**:
+   - Start your FastAPI backend
+   - Run your React frontend
+   - Test authentication flow
+   - Verify API connectivity
+
+## Step 7: Styling and Responsive Design
+
+Ensure your application looks good on all devices:
+
+1. **Test on Mobile Devices**:
+   - Use Chrome DevTools device emulation
+   - Test all key user journeys on mobile
+   
+2. **Refine Animations**:
+   - Improve transitions between pages
+   - Add subtle animations for better UX
+
+## Launch Checklist
+
+Before deploying your frontend:
+
+1. **Performance Optimization**:
+   - Lazy load components
+   - Optimize images
+   - Add caching headers
+
+2. **Error Handling**:
+   - Implement proper error pages
+   - Add error boundaries
+
+3. **Validation**:
+   - Ensure all forms have proper validation
+   - Test field validations
+
+4. **Deployment**:
+   - Build the production version: `npm run build`
+   - Deploy to Netlify, Vercel, or another hosting service
+   - Configure environment variables on the hosting platform
+
+## Additional Resources
+
+- [TailwindCSS Documentation](https://tailwindcss.com/docs)
+- [React Router Documentation](https://reactrouter.com/docs/en/v6)
+- [Formik Documentation](https://formik.org/docs/overview)
+- [Framer Motion Documentation](https://www.framer.com/motion/)
+
+Following this guide will help you create a beautiful, functional alumni portal frontend that connects seamlessly with your FastAPI backend.
