@@ -364,4 +364,38 @@ const TestimonialsSection: React.FC = () => {
 // Call to Action Section Component
 const CallToActionSection: React.FC = () => {
   return (
-    <section className="py-
+    <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+      <div className="container mx-auto px-4 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
+            Ready to Join Your Alumni Community?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+            Become a member today and unlock a world of networking, events, and opportunities.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              to="/register" 
+              className="btn-primary bg-white text-blue-600 hover:bg-blue-50 py-3 px-8 text-lg"
+            >
+              Join Now
+            </Link>
+            <Link 
+              to="/login" 
+              className="btn-secondary border-white text-white hover:bg-blue-700 py-3 px-8 text-lg"
+            >
+              Member Login
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default HomePage;
