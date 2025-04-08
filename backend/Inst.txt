@@ -52,10 +52,10 @@ alumni-portal/
 
 1. **Create Project Structure**:
    ```bash
-   mkdir -p alumni-portal/backend/app/{models,schemas,api,core,services}
-   mkdir -p alumni-portal/backend/alembic/versions
-   touch alumni-portal/backend/app/__init__.py
-   touch alumni-portal/backend/app/{models,schemas,api,core,services}/__init__.py
+   mkdir -p backend/app/{models,schemas,api,core,services}
+   mkdir -p backend/alembic/versions
+   touch backend/app/__init__.py
+   touch backend/app/{models,schemas,api,core,services}/__init__.py
    ```
 
 2. **Create Virtual Environment**:

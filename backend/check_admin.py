@@ -1,7 +1,7 @@
 # Create a test script to check if admin exists
 # Save as check_admin.py
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 db = SessionLocal()
 
 # Query to find admin user
-result = db.execute("SELECT * FROM users WHERE email = 'admin@alumni.org'").fetchall()
+result = db.execute(text("SELECT * FROM users WHERE email = 'admin@alumni.org'")).fetchall()
 
 if result:
     print("Admin user found:")
@@ -27,8 +27,9 @@ if result:
     # Verify password hash (optional)
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     stored_hash = result[0].password_hash  # Adjust column name if different
-    test_password = "admin123"
+    test_password = "password"
     is_match = pwd_context.verify(test_password, stored_hash)
+    print(stored_hash)
     print(f"Password match: {is_match}")
 else:
     print("Admin user not found!")
