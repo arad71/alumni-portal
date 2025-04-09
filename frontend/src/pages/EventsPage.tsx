@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import axios from 'axios';
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 // Types
 interface Event {
