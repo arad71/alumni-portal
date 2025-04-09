@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alumni Portal - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,8 +13,20 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+            --border-color: #ddd;
+            --text-color: #333;
+            --text-secondary: #666;
+            --bg-color: #f5f7fa;
+            --card-bg: white;
+        }
+        
         body {
-            background-color: #f5f7fa;
+            background-color: var(--bg-color);
             height: 100vh;
             display: flex;
             align-items: center;
@@ -27,7 +40,7 @@
         }
         
         .login-card {
-            background-color: white;
+            background-color: var(--card-bg);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
@@ -41,7 +54,7 @@
         .logo {
             width: 120px;
             height: 120px;
-            background-color: #3498db;
+            background-color: var(--primary-color);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -53,37 +66,52 @@
         
         h1 {
             text-align: center;
-            color: #333;
+            color: var(--text-color);
             margin-bottom: 25px;
             font-size: 24px;
         }
         
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
         
         label {
             display: block;
             margin-bottom: 8px;
             font-size: 14px;
-            color: #555;
+            color: var(--text-secondary);
             font-weight: 500;
         }
         
         input[type="email"],
-        input[type="password"] {
+        input[type="password"],
+        input[type="text"] {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 5px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
         
         input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: #3498db;
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
             outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            color: var(--text-secondary);
+        }
+        
+        .toggle-password {
+            cursor: pointer;
         }
         
         .forgot-password {
@@ -92,7 +120,7 @@
         }
         
         .forgot-password a {
-            color: #3498db;
+            color: var(--primary-color);
             font-size: 13px;
             text-decoration: none;
         }
@@ -104,7 +132,7 @@
         .btn {
             width: 100%;
             padding: 12px;
-            background-color: #3498db;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 5px;
@@ -112,21 +140,67 @@
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.3s;
+            position: relative;
         }
         
         .btn:hover {
-            background-color: #2980b9;
+            background-color: var(--primary-dark);
+        }
+        
+        .btn:disabled {
+            background-color: #a0cfee;
+            cursor: not-allowed;
+        }
+        
+        .btn .spinner {
+            display: none;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: translateY(-50%) rotate(360deg);
+            }
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         
         .register-link {
             text-align: center;
             margin-top: 20px;
             font-size: 14px;
-            color: #666;
+            color: var(--text-secondary);
         }
         
         .register-link a {
-            color: #3498db;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
         }
@@ -148,14 +222,14 @@
             left: 0;
             right: 0;
             height: 1px;
-            background-color: #ddd;
+            background-color: var(--border-color);
         }
         
         .divider span {
             position: relative;
-            background-color: white;
+            background-color: var(--card-bg);
             padding: 0 15px;
-            color: #777;
+            color: var(--text-secondary);
             font-size: 14px;
         }
         
@@ -175,17 +249,38 @@
             background-color: #f5f5f5;
             border: 1px solid #eee;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
         }
         
         .social-btn:hover {
             background-color: #e5e5e5;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
-        .social-icon {
-            width: 24px;
-            height: 24px;
-            color: #555;
+        .google-btn { color: #DB4437; }
+        .linkedin-btn { color: #0077B5; }
+        .facebook-btn { color: #3b5998; }
+        
+        .remember-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .checkbox-container label {
+            margin-bottom: 0;
+            font-size: 14px;
+            color: var(--text-secondary);
         }
     </style>
 </head>
@@ -196,19 +291,35 @@
                 <div class="logo">AP</div>
             </div>
             <h1>Alumni Portal Login</h1>
-            <form id="login-form" action="/login" method="post">
+            
+            <div id="alert-container" class="alert"></div>
+            
+            <form id="login-form">
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    <i class="fas fa-envelope input-icon"></i>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required placeholder="Enter your password">
+                    <i class="fas fa-eye toggle-password input-icon" id="toggle-password"></i>
                     <div class="forgot-password">
-                        <a href="/forgot-password">Forgot password?</a>
+                        <a href="/api/auth/forgot-password">Forgot password?</a>
                     </div>
                 </div>
-                <button type="submit" class="btn">Log In</button>
+                
+                <div class="remember-container">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn" id="login-btn">
+                    Log In
+                    <span class="spinner"></span>
+                </button>
             </form>
             
             <div class="divider">
@@ -216,70 +327,191 @@
             </div>
             
             <div class="social-login">
-                <div class="social-btn">
-                    <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                        <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/>
-                    </svg>
+                <div class="social-btn google-btn" id="google-login">
+                    <i class="fab fa-google"></i>
                 </div>
-                <div class="social-btn">
-                    <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                        <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
-                    </svg>
+                <div class="social-btn linkedin-btn" id="linkedin-login">
+                    <i class="fab fa-linkedin-in"></i>
                 </div>
-                <div class="social-btn">
-                    <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/>
-                    </svg>
+                <div class="social-btn facebook-btn" id="facebook-login">
+                    <i class="fab fa-facebook-f"></i>
                 </div>
             </div>
             
             <div class="register-link">
-                Don't have an account? <a href="/register">Register now</a>
+                Don't have an account? <a href="/api/auth/register">Register now</a>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        // DOM Elements
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const spinner = document.querySelector('.spinner');
+        const alertContainer = document.getElementById('alert-container');
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        
+        // Base API URL - Change this to match your backend
+        const API_BASE_URL = '/api';
+        
+        // Show alert function
+        function showAlert(message, type) {
+            alertContainer.textContent = message;
+            alertContainer.className = `alert alert-${type}`;
+            alertContainer.style.display = 'block';
+            
+            // Auto hide after 5 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertContainer.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Check for existing token on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                // Validate token
+                fetch(`${API_BASE_URL}/auth/validate-token`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Token is valid, redirect to dashboard
+                        window.location.href = '/dashboard';
+                    } else {
+                        // Invalid token, remove it
+                        localStorage.removeItem('auth_token');
+                    }
+                })
+                .catch(err => {
+                    console.error('Token validation error:', err);
+                    localStorage.removeItem('auth_token');
+                });
+            }
+            
+            // Check for OAuth redirect params
+            const urlParams = new URLSearchParams(window.location.search);
+            const oauthError = urlParams.get('oauth_error');
+            const oauthSuccess = urlParams.get('oauth_success');
+            
+            if (oauthError) {
+                showAlert(decodeURIComponent(oauthError), 'error');
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (oauthSuccess) {
+                showAlert('Social login successful! Redirecting...', 'success');
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                // Get token from URL if available
+                const token = urlParams.get('token');
+                if (token) {
+                    localStorage.setItem('auth_token', token);
+                }
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+            }
+        });
+        
+        // Handle login form submission
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Clear previous alerts
+            alertContainer.style.display = 'none';
+            
+            // Form data
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
             
-            // Here you would add your authentication logic
-            // For example, sending a request to your backend API
-            console.log('Login attempt:', email);
+            // Validate input
+            if (!email || !password) {
+                showAlert('Please enter both email and password', 'error');
+                return;
+            }
             
-            // Normally you would do something like:
-            /*
-            fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = '/dashboard';
-                } else {
-                    alert('Login failed: ' + data.message);
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showAlert('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            spinner.style.display = 'block';
+            
+            try {
+                // Send login request
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        remember
+                    }),
+                    credentials: 'include' // Include cookies
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during login');
-            });
-            */
-            
-            // For demo purposes, simulate a login
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 1000);
+                
+                // Store token if provided
+                if (data.token) {
+                    localStorage.setItem('auth_token', data.token);
+                }
+                
+                // Show success message
+                showAlert('Login successful! Redirecting...', 'success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl || '/dashboard';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert(error.message || 'An error occurred during login', 'error');
+            } finally {
+                // Reset button state
+                loginBtn.disabled = false;
+                spinner.style.display = 'none';
+            }
+        });
+        
+        // Social login handlers
+        document.getElementById('google-login').addEventListener('click', () => {
+            window.location.href = `${API_BASE_URL}/auth/google`;
+        });
+        
+        document.getElementById('linkedin-login').addEventListener('click', () => {
+            window.location.href = `${API_BASE_URL}/auth/linkedin`;
+        });
+        
+        document.getElementById('facebook-login').addEventListener('click', () => {
+            window.location.href = `${API_BASE_URL}/auth/facebook`;
         });
     </script>
 </body>
