@@ -1,0 +1,1431 @@
+align-items: center;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .spot-name {
+            font-weight: 500;
+        }
+        
+        .spot-actions .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        /* System Status */
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .status-indicator.active {
+            background-color: var(--success-color);
+        }
+        
+        .status-indicator.inactive {
+            background-color: var(--danger-color);
+        }
+        
+        .status-indicator.warning {
+            background-color: var(--warning-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 72px;
+            }
+            
+            .sidebar-brand span,
+            .sidebar-menu span,
+            .sidebar-menu h6,
+            .sidebar-footer span {
+                display: none;
+            }
+            
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 1rem;
+            }
+            
+            .sidebar-menu a i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 72px;
+            }
+            
+            .configurator-container {
+                flex-direction: column;
+            }
+            
+            .spot-controls {
+                padding-left: 0;
+                padding-top: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                overflow: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .sidebar-brand span,
+            .sidebar-menu span,
+            .sidebar-menu h6 {
+                display: inline;
+            }
+            
+            .sidebar-menu a {
+                justify-content: flex-start;
+                padding: 0.75rem 1.5rem;
+            }
+            
+            .sidebar-menu a i {
+                margin-right: 0.75rem;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="fas fa-parking"></i>
+                <span>AI Parking Admin</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <h6>Main</h6>
+            <ul>
+                <li>
+                    <a href="#" class="active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="parking-spots">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Parking Spots</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="reservations">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Reservations</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <h6>System</h6>
+            <ul>
+                <li>
+                    <a href="#" data-section="monitoring">
+                        <i class="fas fa-video"></i>
+                        <span>Monitoring</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="logs">
+                        <i class="fas fa-history"></i>
+                        <span>System Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+            <span>© 2025 AI Parking System</span>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div class="content-section" id="dashboard-section">
+            <div class="content-header">
+                <div class="content-title">
+                    <h1>Dashboard</h1>
+                    <p>System overview and key metrics</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline-secondary" id="refreshBtn">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-download me-2"></i>Export Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-card-icon success">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-value" id="totalSpots">0</div>
+                        <p class="stat-card-label">Total Parking Spots</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-icon info">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-value" id="registeredUsers">0</div>
+                        <p class="stat-card-label">Registered Users</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-icon warning">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-value" id="activeReservations">0</div>
+                        <p class="stat-card-label">Active Reservations</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-icon danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-value" id="systemAlerts">0</div>
+                        <p class="stat-card-label">System Alerts</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- System Status Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>System Status</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary me-2" id="startMonitoringBtn">
+                            <i class="fas fa-play me-1"></i>Start
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" id="stopMonitoringBtn">
+                            <i class="fas fa-stop me-1"></i>Stop
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Camera Feed</td>
+                                        <td>
+                                            <span class="status-indicator active"></span>
+                                            <span>Active</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>AI Detection</td>
+                                        <td>
+                                            <span class="status-indicator active"></span>
+                                            <span>Running</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Database</td>
+                                        <td>
+                                            <span class="status-indicator active"></span>
+                                            <span>Connected</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Web Server</td>
+                                        <td>
+                                            <span class="status-indicator active"></span>
+                                            <span>Online</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>System Uptime</td>
+                                        <td>12 days, 5 hours</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last Backup</td>
+                                        <td>2025-04-08 03:15 AM</td>
+                                    </tr>
+                                    <tr>
+                                        <td>CPU Usage</td>
+                                        <td>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-success" style="width: 35%"></div>
+                                            </div>
+                                            <small class="text-muted">35%</small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Memory Usage</td>
+                                        <td>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-warning" style="width: 68%"></div>
+                                            </div>
+                                            <small class="text-muted">68%</small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Activity</h5>
+                    <button class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>User</th>
+                                <th>Time</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-success">User Login</span></td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">JS</div>
+                                        <span>John Smith</span>
+                                    </div>
+                                </td>
+                                <td>5 mins ago</td>
+                                <td>Logged in from 192.168.1.45</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">Reservation</span></td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">AJ</div>
+                                        <span>Alice Johnson</span>
+                                    </div>
+                                </td>
+                                <td>25 mins ago</td>
+                                <td>Reserved Spot #12 for tomorrow</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-warning">System Alert</span></td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">SYS</div>
+                                        <span>System</span>
+                                    </div>
+                                </td>
+                                <td>1 hour ago</td>
+                                <td>Low disk space warning</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-info">Detection</span></td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">AI</div>
+                                        <span>AI System</span>
+                                    </div>
+                                </td>
+                                <td>2 hours ago</td>
+                                <td>Detected unauthorized parking in Spot #7</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger">Reservation Cancelled</span></td>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">RD</div>
+                                        <span>Robert Davis</span>
+                                    </div>
+                                </td>
+                                <td>3 hours ago</td>
+                                <td>Cancelled reservation for Spot #3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Parking Spots Section -->
+        <div class="content-section" id="parking-spots-section" style="display: none;">
+            <div class="content-header">
+                <div class="content-title">
+                    <h1>Parking Spots</h1>
+                    <p>Configure and manage parking spots</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-success" id="defineNewSpotsBtn">
+                        <i class="fas fa-plus me-2"></i>Define New Spots
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Spot Configurator -->
+            <div class="card mb-4" id="spotConfigurator" style="display: none;">
+                <div class="card-header">
+                    <h5>Parking Spot Configurator</h5>
+                    <div>
+                        <button class="btn btn-sm btn-danger me-2" id="cancelConfigBtn">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button class="btn btn-sm btn-success" id="saveConfigBtn">
+                            <i class="fas fa-save me-1"></i>Save Configuration
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="configurator-container">
+                        <div class="video-container">
+                            <img src="/video_feed" alt="Camera Feed" class="video-feed">
+                            <canvas class="canvas-overlay" id="spotCanvas"></canvas>
+                        </div>
+                        <div class="spot-controls">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>Instructions:</h6>
+                                <ol class="mb-0">
+                                    <li>Click on the video feed to mark the 4 corners of each parking spot</li>
+                                    <li>Complete a spot by marking all 4 corners</li>
+                                    <li>Use the controls below to manage spots</li>
+                                    <li>Click Save when finished</li>
+                                </ol>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <h6>Current Spots:</h6>
+                                <div class="spot-list" id="spotList">
+                                    <!-- Spots will be listed here -->
+                                    <div class="text-muted text-center py-3" id="noSpotsMessage">
+                                        No spots defined yet. Click on the video to start.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-danger w-100" id="clearSpotsBtn">
+                                    <i class="fas fa-trash-alt me-1"></i>Clear All Spots
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Parking Spots List -->
+            <div class="card" id="spotsList">
+                <div class="card-header">
+                    <h5>Parking Spots</h5>
+                    <div class="input-group" style="width: 250px;">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search spots...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Label</th>
+                                <th>Section</th>
+                                <th>Status</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Spot #1</td>
+                                <td>Main</td>
+                                <td><span class="badge bg-success">Free</span></td>
+                                <td>5 mins ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Spot #2</td>
+                                <td>Main</td>
+                                <td><span class="badge bg-danger">Occupied</span></td>
+                                <td>2 mins ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Spot #3</td>
+                                <td>Main</td>
+                                <td><span class="badge bg-warning">Reserved</span></td>
+                                <td>15 mins ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Spot #4</td>
+                                <td>Main</td>
+                                <td><span class="badge bg-success">Free</span></td>
+                                <td>10 mins ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Spot #5</td>
+                                <td>Main</td>
+                                <td><span class="badge bg-danger">Occupied</span></td>
+                                <td>1 min ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Users Section -->
+        <div class="content-section" id="users-section" style="display: none;">
+            <div class="content-header">
+                <div class="content-title">
+                    <h1>Users</h1>
+                    <p>Manage system users and permissions</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="fas fa-user-plus me-2"></i>Add User
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Users List -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Registered Users</h5>
+                    <div class="input-group" style="width: 250px;">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search users...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">JS</div>
+                                        <span>John Smith</span>
+                                    </div>
+                                </td>
+                                <td>john.smith@example.com</td>
+                                <td>Admin</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>Jan 15, 2025</td>
+                                <td>5 mins ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-user-slash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">AJ</div>
+                                        <span>Alice Johnson</span>
+                                    </div>
+                                </td>
+                                <td>alice.j@example.com</td>
+                                <td>User</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>Feb 22, 2025</td>
+                                <td>25 mins ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-user-slash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">RD</div>
+                                        <span>Robert Davis</span>
+                                    </div>
+                                </td>
+                                <td>robert.d@example.com</td>
+                                <td>User</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>Mar 10, 2025</td>
+                                <td>3 hours ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-user-slash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-avatar">EW</div>
+                                        <span>Emma Wilson</span>
+                                    </div>
+                                </td>
+                                <td>emma.w@example.com</td>
+                                <td>User</td>
+                                <td><span class="badge bg-secondary">Inactive</span></td>
+                                <td>Jan 05, 2025</td>
+                                <td>2 weeks ago</td>
+                                <td class="action-buttons">
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-success"><i class="fas fa-user-check"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other sections would be defined similarly -->
+        <div class="content-section" id="reservations-section" style="display: none;">
+            <div class="content-header">
+                <div class="content-title">
+                    <h1>Reservations</h1>
+                    <p>Manage parking spot reservations</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Reservation Management</h5>
+                </div>
+                <div class="card-body">
+                    <p>Reservation content would go here...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-section" id="monitoring-section" style="display: none;">
+            <div class="content-header">
+                <div class="content-title">
+                    <h1>Monitoring</h1>
+                    <p>Live camera feeds and detection system</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h5>Live Monitoring</h5>
+                </div>
+                <div class="card-body">
+                    <p>Monitoring content would go here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" required>
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="sendInvite" checked>
+                            <label class="form-check-label" for="sendInvite">Send welcome email</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Add User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize sidebar navigation
+            initSidebar();
+            
+            // Load dashboard data
+            loadDashboardData();
+            
+            // Setup parking spot configurator
+            setupSpotConfigurator();
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
+        
+        function initSidebar() {
+            // Handle menu item clicks
+            document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all menu items
+                    document.querySelectorAll('.sidebar-menu a').forEach(menuItem => {
+                        menuItem.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Show the corresponding section
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                });
+            });
+        }
+        
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show the selected section
+            const selectedSection = document.getElementById(`${sectionId}-section`);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+        }
+        
+        function loadDashboardData() {
+            // In a real app, this would fetch data from the API
+            // For demo purposes, we'll use mock data
+            
+            // Update stats
+            document.getElementById('totalSpots').textContent = '20';
+            document.getElementById('registeredUsers').textContent = '42';
+            document.getElementById('activeReservations').textContent = '15';
+            document.getElementById('systemAlerts').textContent = '3';
+            
+            // In a real app, we would fetch actual data
+            // Example:
+            /*
+            fetch('/api/admin/dashboard')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalSpots').textContent = data.totalSpots;
+                    document.getElementById('registeredUsers').textContent = data.registeredUsers;
+                    document.getElementById('activeReservations').textContent = data.activeReservations;
+                    document.getElementById('systemAlerts').textContent = data.systemAlerts;
+                })
+                .catch(error => {
+                    console.error('Error loading dashboard data:', error);
+                });
+            */
+        }
+        
+        function setupSpotConfigurator() {
+            const defineNewSpotsBtn = document.getElementById('defineNewSpotsBtn');
+            const spotConfigurator = document.getElementById('spotConfigurator');
+            const spotsList = document.getElementById('spotsList');
+            const cancelConfigBtn = document.getElementById('cancelConfigBtn');
+            const saveConfigBtn = document.getElementById('saveConfigBtn');
+            const spotCanvas = document.getElementById('spotCanvas');
+            const spotList = document.getElementById('spotList');
+            const noSpotsMessage = document.getElementById('noSpotsMessage');
+            const clearSpotsBtn = document.getElementById('clearSpotsBtn');
+            
+            // Initialize canvas
+            const ctx = spotCanvas.getContext('2d');
+            const spots = [];
+            let currentSpot = [];
+            
+            // Show spot configurator
+            defineNewSpotsBtn.addEventListener('click', function() {
+                spotConfigurator.style.display = 'block';
+                spotsList.style.display = 'none';
+                
+                // Initialize canvas size
+                resizeCanvas();
+            });
+            
+            // Hide spot configurator
+            cancelConfigBtn.addEventListener('click', function() {
+                spotConfigurator.style.display = 'none';
+                spotsList.style.display = 'block';
+            });
+            
+            // Save spot configuration
+            saveConfigBtn.addEventListener('click', function() {
+                // In a real app, this would send the spot data to the API
+                alert(`Configuration saved with ${spots.length} parking spots.`);
+                
+                spotConfigurator.style.display = 'none';
+                spotsList.style.display = 'block';
+            });
+            
+            // Clear all spots
+            clearSpotsBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all spots? This cannot be undone.')) {
+                    spots.length = 0;
+                    currentSpot.length = 0;
+                    updateSpotList();
+                    drawSpots();
+                }
+            });
+            
+            // Canvas click handler
+            spotCanvas.addEventListener('click', function(e) {
+                const rect = spotCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Add point to current spot
+                currentSpot.push({x, y});
+                
+                // If we have 4 points, complete the spot
+                if (currentSpot.length === 4) {
+                    spots.push([...currentSpot]);
+                    currentSpot.length = 0;
+                    updateSpotList();
+                }
+                
+                // Redraw canvas
+                drawSpots();
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', resizeCanvas);
+            
+            function resizeCanvas() {
+                const videoContainer = document.querySelector('.video-container');
+                spotCanvas.width = videoContainer.offsetWidth;
+                spotCanvas.height = videoContainer.offsetHeight;
+                drawSpots();
+            }
+            
+            function drawSpots() {
+                // Clear canvas
+                ctx.clearRect(0, 0, spotCanvas.width, spotCanvas.height);
+                
+                // Draw completed spots
+                spots.forEach((spot, index) => {
+                    ctx.beginPath();
+                    ctx.moveTo(spot[0].x, spot[0].y);
+                    
+                    for (let i = 1; i < spot.length; i++) {
+                        ctx.lineTo(spot[i].x, spot[i].y);
+                    }
+                    
+                    ctx.closePath();
+                    ctx.strokeStyle = '#2ecc71';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Fill with semi-transparent color
+                    ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
+                    ctx.fill();
+                    
+                    // Add spot number
+                    const centerX = spot.reduce((sum, point) => sum + point.x, 0) / spot.length;
+                    const centerY = spot.reduce((sum, point) => sum + point.y, 0) / spot.length;
+                    
+                    ctx.font = '16px Arial';
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${index + 1}`, centerX, centerY);
+                });
+                
+                // Draw current spot being defined
+                if (currentSpot.length > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(currentSpot[0].x, currentSpot[0].y);
+                    
+                    for (let i = 1; i < currentSpot.length; i++) {
+                        ctx.lineTo(currentSpot[i].x, currentSpot[i].y);
+                    }
+                    
+                    if (currentSpot.length === 3) {
+                        // Draw a dashed line back to the first point
+                        ctx.setLineDash([5, 5]);
+                        ctx.lineTo(currentSpot[0].x, currentSpot[0].y);
+                        ctx.setLineDash([]);
+                    }
+                    
+                    ctx.strokeStyle = '#3498db';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Draw points
+                    currentSpot.forEach(point => {
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                        ctx.fillStyle = '#3498db';
+                        ctx.fill();
+                    });
+                }
+            }
+            
+            function updateSpotList() {
+                if (spots.length === 0) {
+                    noSpotsMessage.style.display = 'block';
+                    spotList.innerHTML = '';
+                    return;
+                }
+                
+                noSpotsMessage.style.display = 'none';
+                spotList.innerHTML = '';
+                
+                spots.forEach((spot, index) => {
+                    const spotItem = document.createElement('div');
+                    spotItem.className = 'spot-item';
+                    spotItem.innerHTML = `
+                        <div class="spot-name">Spot #${index + 1}</div>
+                        <div class="spot-actions">
+                            <button class="btn btn-sm btn-outline-danger delete-spot" data-index="${index}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    spotList.appendChild(spotItem);
+                });
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-spot').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        spots.splice(index, 1);
+                        updateSpotList();
+                        drawSpots();
+                    });
+                });
+            }
+        }
+        
+        function setupEventListeners() {
+            // Refresh button
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    loadDashboardData();
+                    alert('Data refreshed!');
+                });
+            }
+            
+            // Monitoring control buttons
+            const startMonitoringBtn = document.getElementById('startMonitoringBtn');
+            const stopMonitoringBtn = document.getElementById('stopMonitoringBtn');
+            
+            if (startMonitoringBtn && stopMonitoringBtn) {
+                startMonitoringBtn.addEventListener('click', function() {
+                    fetch('/api/monitoring/start', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert('Monitoring started');
+                        })
+                        .catch(error => {
+                            console.error('Error starting monitoring:', error);
+                            alert('Monitoring started'); // For demo
+                        });
+                });
+                
+                stopMonitoringBtn.addEventListener('click', function() {
+                    fetch('/api/monitoring/stop', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert('Monitoring stopped');
+                        })
+                        .catch(error => {
+                            console.error('Error stopping monitoring:', error);
+                            alert('Monitoring stopped'); // For demo
+                        });
+                });
+            }
+            
+            // Add user form
+            const addUserForm = document.getElementById('addUserForm');
+            if (addUserForm) {
+                addUserForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const username = document.getElementById('username').value;
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    const role = document.getElementById('role').value;
+                    const sendInvite = document.getElementById('sendInvite').checked;
+                    
+                    // In a real app, this would send the data to the API
+                    console.log({
+                        username,
+                        email,
+                        password,
+                        role,
+                        sendInvite
+                    });
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                    modal.hide();
+                    
+                    // Show success message
+                    alert(`User ${username} added successfully.`);
+                });
+            }
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AI Parking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--secondary-color);
+            color: white;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .sidebar-brand i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .sidebar-brand span {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-menu h6 {
+            padding: 0 1.5rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu a i {
+            width: 1.5rem;
+            text-align: center;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .sidebar-footer span {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .content-title h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-title p {
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .header-actions .btn {
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+        }
+        
+        /* Cards */
+        .card {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1.5rem;
+            border: none;
+        }
+        
+        .card-header {
+            background-color: transparent;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            display: flex;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 1.5rem;
+            background-color: #fff;
+        }
+        
+        .stat-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .stat-card-icon.success {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .stat-card-icon.danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .stat-card-icon.warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .stat-card-icon.info {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--info-color);
+        }
+        
+        .stat-card-content {
+            flex: 1;
+        }
+        
+        .stat-card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-card-label {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Tables */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .table td, .table th {
+            padding: 1rem 1.5rem;
+            vertical-align: middle;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .badge {
+            padding: 0.5rem 0.75rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        
+        .action-buttons .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+        }
+        
+        /* Forms */
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #dee2e6;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        /* Parking Spot Configurator */
+        .configurator-container {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+        
+        .video-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+            border-radius: 0.5rem;
+            flex: 2;
+        }
+        
+        .video-feed {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        
+        .spot-controls {
+            flex: 1;
+            padding-left: 1.5rem;
+        }
+        
+        .canvas-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+        
+        .spot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
