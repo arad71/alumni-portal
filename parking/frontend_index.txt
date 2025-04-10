@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Parking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+        }
+        
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: white;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 8rem 0;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -5rem;
+            left: 0;
+            width: 100%;
+            height: 10rem;
+            background-color: #f8f9fa;
+            transform: skewY(-3deg);
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .cta-section {
+            background-color: var(--light-color);
+            padding: 5rem 0;
+            position: relative;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -5rem;
+            left: 0;
+            width: 100%;
+            height: 10rem;
+            background-color: white;
+            transform: skewY(3deg);
+            z-index: 1;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 30px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .login-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+            border-color: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                padding: 5rem 0;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-parking me-2"></i>
+                AI Parking System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light ms-2" href="#signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1>Find Parking Spots Instantly with AI</h1>
+                    <p class="lead mb-4">Our advanced AI-powered system detects free parking spots in real-time, saving you time and reducing stress.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#signup" class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">Get Started</a>
+                        <a href="#how-it-works" class="btn btn-outline-light btn-lg">How It Works</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <img src="/static/images/parking-illustration.svg" alt="Parking Illustration" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container py-5" id="features">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Smart Parking Features</h2>
+            <p class="lead text-muted">Discover how our AI parking system makes your life easier</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3>Computer Vision Detection</h3>
+                    <p>Our AI uses advanced computer vision algorithms to detect free parking spots with high accuracy even in challenging lighting conditions.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile App Integration</h3>
+                    <p>Access real-time parking data on your smartphone and get guided navigation to the nearest available spot.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Spot Reservation</h3>
+                    <p>Reserve parking spots in advance for important meetings or events to ensure hassle-free arrival.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Occupancy Analytics</h3>
+                    <p>View historical parking data and trends to better understand usage patterns and plan accordingly.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Notifications & Alerts</h3>
+                    <p>Receive real-time notifications about parking availability and reservation reminders.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Enhanced Security</h3>
+                    <p>The system provides additional security by monitoring parking areas 24/7 and detecting unauthorized parking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="container py-5" id="how-it-works">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="lead text-muted">Our AI parking system is simple to use but powerful in functionality</p>
+        </div>
+        
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+                <h3>1. Camera Detection</h3>
+                <p>Our cameras equipped with AI algorithms constantly monitor the parking area to detect vacant and occupied spots. The system works in all lighting conditions and is highly accurate.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="/static/images/camera-detection.jpg" alt="Camera Detection" class="img-fluid rounded shadow">
+            </div>
+        </div>
+        
+        <div class="row align-items-center mb-5 flex-md-row-reverse">
+            <div class="col-md-6">
+                <h3>2. Real-time Processing</h3>
+                <p>The video feed is processed in real-time by our AI system, which identifies each parking spot and determines its occupancy status with high accuracy.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="/static/images/ai-processing.jpg" alt="AI Processing" class="img-fluid rounded shadow">
+            </div>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h3>3. Mobile Access</h3>
+                <p>Access real-time information about parking availability through our web interface or mobile app. The system guides you to the nearest available spot.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="/static/images/mobile-app.jpg" alt="Mobile App" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container cta-content text-center">
+            <h2 class="display-5 fw-bold mb-4">Ready to Experience Smart Parking?</h2>
+            <p class="lead mb-4">Join thousands of users who have transformed their parking experience with our AI solution.</p>
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#signupModal">Get Started Today</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3">AI Parking System</h5>
+                    <p>Revolutionizing parking management with cutting-edge AI technology to make finding parking spots effortless.</p>
+                    <div class="social-links mt-4">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5 class="mb-3">Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Home</a></li>
+                        <li class="mb-2"><a href="#features">Features</a></li>
+                        <li class="mb-2"><a href="#how-it-works">How It Works</a></li>
+                        <li class="mb-2"><a href="#">Pricing</a></li>
+                        <li class="mb-2"><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="mb-3">Contact</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Tech Street, Innovation City</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@aiparkingsystem.com</li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-3">
+                    <h5 class="mb-3">Newsletter</h5>
+                    <p>Subscribe to our newsletter for updates and news.</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your Email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <hr class="mt-4 mb-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 AI Parking System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to Your Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="loginUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="#" class="text-decoration-none">Forgot password?</a>
+                        <p class="mt-2 mb-0">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#signupModal">Sign up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create an Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <label for="signupUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="signupUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="signupEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="signupPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="termsAgree" required>
+                            <label class="form-check-label" for="termsAgree">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p class="mb-0">Already have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login form submission
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const username = document.getElementById('loginUsername').value;
+                    const password = document.getElementById('loginPassword').value;
+                    
+                    // Make API call to login endpoint
+                    fetch('/api/users/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Store user data in localStorage
+                            localStorage.setItem('user', JSON.stringify(data.user));
+                            
+                            // Redirect to dashboard
+                            window.location.href = '/dashboard';
+                        } else {
+                            alert('Login failed: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during login:', error);
+                        alert('Login failed. Please try again.');
+                    });
+                });
+            }
+            
+            // Signup form submission
+            const signupForm = document.getElementById('signupForm');
+            if (signupForm) {
+                signupForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const username = document.getElementById('signupUsername').value;
+                    const email = document.getElementById('signupEmail').value;
+                    const password = document.getElementById('signupPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    
+                    // Validate passwords match
+                    if (password !== confirmPassword) {
+                        alert('Passwords do not match!');
+                        return;
+                    }
+                    
+                    // Make API call to register endpoint
+                    fetch('/api/users/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            email: email,
+                            password: password
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert('Registration successful! Please login.');
+                            
+                            // Close signup modal and open login modal
+                            const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+                            signupModal.hide();
+                            
+                            setTimeout(() => {
+                                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                                loginModal.show();
+                            }, 500);
+                        } else {
+                            alert('Registration failed: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during registration:', error);
+                        alert('Registration failed. Please try again.');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
